@@ -24,6 +24,20 @@
                         @else
                             <p>У вас пока нет открытых счетов</p>
                         @endif
+                        <div>
+                        <form action="{{ url('/home/send') }}" method="POST">
+                            @csrf
+                            <p>Перевести с <input type="text" name="from" size="4"> на <input type="text" name="to"
+                                                                                           size="4">
+                            сумма: <input type="number" name="cash" step="0.01" min="0" size="10">
+                            <select name="valute">
+                                <option selected value="UAH">UAH</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                            <input type="submit" value="Перевести"></p>
+                        </form>
+                        </div>
                         <form action="{{ url('/home') }}" method="POST">
                             @csrf
                             <p>Валюта: <select name="v">
