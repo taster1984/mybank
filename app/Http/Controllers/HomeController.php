@@ -68,6 +68,7 @@ class HomeController extends Controller
         $from = $request->get("from");
         $to = $request->get("to");
         $cash = $request->get("cash");
+        $valute = $request->get("valute");
         $accFrom = Auth::user()->accounts()->where('number', '=', $from)->first();
         if (!$accFrom) {
             return view('send', ["error" => "Счет отправителя указан неверно."]);
@@ -76,8 +77,15 @@ class HomeController extends Controller
         if (!$accTo) {
             return view('send', ["error" => "Счет получателя указан неверно."]);
         }
-        if ($cash<=0){
+        if ($cash <= 0) {
             return view('send', ["error" => "Сумма перевода указана неверно"]);
+        }
+        if ($valute != "UAH" && $valute != "USD" && $valute != "EUR") {
+            return view('send', ["error" => "Валюта перевода указана неверно"]);
+        }
+        $transaction = new \App\TransactionService();
+        if (!$transaction->send($accFrom, $accTo, $cash, $valute)) {
+            return view('send', ["error" => "Ошибка перевода. Возможно недостаточно средств."]);
         }
         return view('send');
     }
