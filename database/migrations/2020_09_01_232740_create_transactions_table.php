@@ -15,10 +15,10 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string("from");
-            $table->string("to");
-            $table->double("cash_from");
-            $table->double("cash_to");
+            $table->string("from_number");
+            $table->string("to_number");
+            $table->double("cash_from",15,2);
+            $table->double("cash_to",15,2);
             $table->timestamps();
         });
     }

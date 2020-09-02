@@ -33,9 +33,12 @@ class TransactionService
         if ($from->quantity < $this->convert($v, $from->valute, $cash)) {
             return false;
         }
+        if ($from->number == $to->number) {
+            return false;
+        }
         $trans = new Transaction();
-        $trans->from = $from->number;
-        $trans->to = $to->number;
+        $trans->from_number = $from->number;
+        $trans->to_number = $to->number;
         $trans->cash_from = $this->convert($v, $from->valute, $cash);
         $trans->cash_to = $this->convert($v, $to->valute, $cash);
         $trans->save();
@@ -57,20 +60,20 @@ class TransactionService
             $start = 150;
         }
         $sends = DB::select(
-            "select sum(cash_from) as sm from transactions where transactions.from=?",
+            "select sum(cash_from) as sm from transactions where from_number=?",
             [$acc->number]
         );
         $recievs = DB::select(
-            "select sum(cash_to) as sm from transactions where transactions.to=?",
+            "select sum(cash_to) as sm from transactions where to_number=?",
             [$acc->number]
         );
         $res = 0;
-        foreach ($recievs as $r){
-            $res=$r->sm;
+        foreach ($recievs as $r) {
+            $res = $r->sm;
         }
         $s = 0;
-        foreach ($sends as $send){
-            $s=$send->sm;
+        foreach ($sends as $send) {
+            $s = $send->sm;
         }
         $recievs = $res;
         $sends = $s;

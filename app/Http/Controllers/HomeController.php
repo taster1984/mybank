@@ -89,17 +89,54 @@ class HomeController extends Controller
         }
         return view('send');
     }
+
     /**
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function close(Request $request)
     {
         $acc = $request->get("number");
-        $acc = \App\Account::where("number","=",$acc)->first();
+        $acc = Auth::user()->accounts()->where("number", "=", $acc)->first();
         if ($acc) {
             $acc->delete();
         }
         return redirect('home');
     }
+
+    /**
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function history(Request $request)
+    {
+        $number = $request->get("number");
+        $account = Auth::user()->accounts()->where("number", "=", $number)->first();
+        if (!$account) {
+            return view("history", ["error" => "Неверный номер счета"]);
+        }
+        $transactions = \App\Transaction::where("from_number", "=", $number)->orWhere("to_number", "=", $number)->get();
+        $trs = [];
+        foreach ($transactions as $t) {
+            if ($t->from_number == $number) {
+                $tr["type"] = "sended";
+                $tr["cash_from"] = round($t->cash_from,2);
+                $tr["to"] = $t->to_number;
+                $tr["date"] = $t->updated_at;
+                $tr["valute"]=$account->valute;
+                $trs[]=$tr;
+            }
+            if ($t->to_number == $number) {
+                $tr["type"]="recieved";
+                $tr["cash_to"]=round($t->cash_to,2);
+                $tr["from"]=$t->from_number;
+                $tr["date"]=$t->updated_at;
+                $tr["valute"]=$account->valute;
+                $trs[]=$tr;
+            }
+        }
+
+        return view("history",["transactions"=>$trs]);
+
+    }
+
 
 }
