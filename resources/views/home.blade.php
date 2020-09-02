@@ -47,6 +47,12 @@
                                 </select>
                                 <input type="submit" value="Открыть счет"></p>
                         </form>
+                            <form action="{{ url('/home/close') }}" method="POST">
+                                @csrf
+                                <p><input type="text" name="number" size="4">
+                                    <input type="submit" value="Закрыть счет"></p>
+                            </form>
+
                     </div>
                 </div>
             </div>

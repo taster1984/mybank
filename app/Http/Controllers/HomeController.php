@@ -89,5 +89,17 @@ class HomeController extends Controller
         }
         return view('send');
     }
+    /**
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function close(Request $request)
+    {
+        $acc = $request->get("number");
+        $acc = \App\Account::where("number","=",$acc)->first();
+        if ($acc) {
+            $acc->delete();
+        }
+        return redirect('home');
+    }
 
 }
